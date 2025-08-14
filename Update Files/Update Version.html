@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Download Latest Release</title>
+<style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    #download {
+      background-color: #FFD700;
+      color: #121212;
+      border: none;
+      border-radius: 50px;
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    #download:hover {
+      background-color: #FFC300;
+      transform: scale(1.05);
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<button id="download">Download Latest Version</button>
+
+<script>
+const repoOwner = "fireball71";
+const repoName = "soundboard";
+
+document.getElementById("download").addEventListener("click", () => {
+  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.assets && data.assets.length > 0) {
+        const downloadUrl = data.assets[0].browser_download_url;
+        window.location.href = downloadUrl;
+      } else {
+        alert("No downloadable assets found in the latest release.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error fetching latest release.");
+    });
+});
+</script>
+
+</body>
+</html>
