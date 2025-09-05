@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Download HTML File</title>
+<style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #FFD700;
+    }
+    #download {
+      background-color: #FFD700;
+      color: #121212;
+      border: none;
+      border-radius: 50px;
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    #download:hover {
+      background-color: #FFC300;
+      transform: scale(1.05);
+    }
+</style>
+</head>
+<body>
+
+<h1>Download the newest version through HTML</h1>
+<button id="download">Download HTML File</button>
+
+<script>
+const repoOwner = "fireball71";
+const repoName = "soundboard";
+
+document.getElementById("download").addEventListener("click", () => {
+  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/`)
+    .then(response => response.json())
+    .then(files => {
+      const htmlFile = files.find(file => file.name.endsWith(".html"));
+      if (htmlFile) {
+        // Fetch the raw HTML as a blob
+        fetch(htmlFile.download_url)
+          .then(res => res.blob())
+          .then(blob => {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = htmlFile.name; // force as file
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+          });
+      } else {
+        alert("No HTML file found in the repository.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error fetching repository contents.");
+    });
+});
+</script>
+
+</body>
+</html>
